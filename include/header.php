@@ -28,7 +28,7 @@
           <?php elseif(isset($_SESSION['username'])):?>
             <li><a href="#">Dashboard</a></li>
             <li><a href="profile.php">Add Profile</a></li>
-            <li><a href="#">Add Post</a></li>
+            <li><a href="post.php">Add Post</a></li>
             <li><a href="logout.php">LogOut</a></li>
           <?php else:?>
             <li><a href="index.php">Register</a></li>

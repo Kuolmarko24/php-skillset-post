@@ -1,4 +1,4 @@
-<?php session_start();?>
+
 <?php 
 include("config/db.php");
 if(isset($_FILES['avatar'])){
@@ -6,26 +6,38 @@ if(isset($_FILES['avatar'])){
     if($profession!=""){
         $upload = 1;
         $file_name = $_FILES['avatar']['name'];
-        $file_name = $_FILES['avatar']['size'];
-        $file_name = $_FILES['avatar']['tmp_name'];
-        $file_name = $_FILES['avatar']['type'];
+        $file_size = $_FILES['avatar']['size'];
+        $file_tmp = $_FILES['avatar']['tmp_name'];
+        $file_type = $_FILES['avatar']['type'];
         $tar_dir = "assets/uploads";
-        $target_file = $target_dir . basename($_FILES['avatar']['name']);
+        $target_file = $tar_dir . basename($_FILES['avatar']['name']);
         $check = getimageSize($_FILES['avatar']['tmp_name']);
-        $file_ext = strtolower(end(explode('.',$_FILES['avatar']['name'])));
+        $tmp = explode('.',$_FILES['avatar']['name']);
+        $file_ext = end($tmp);
 
-        /*$data = array(
-            ''=>$file_name,
-            ''=>$file_size,
-            ''=>$file_tmp,
-            ''=>$file_type,
-            ''=>$target_dir,
-            ''=>$file_ext
-        );
-        echo '<prev>';
-        print_r($data);
-        echo '<prev>';
-        exit();*/
+        $extensions = array("jpeg","jpg","png");
+        if(in_array($file_ext, $extensions)==false){
+            $msg = "Please choose the image which has the extension as jpeg, jpg, png";
+        }if(file_exists($target_file())){
+            $msg = "Sorry! File already exists";
+        }
+        if($check==false){
+            $msg = "File is not an image";
+        }if(empty($msg)==true){
+            move_uploaded_file($file_tmp,"assets/uploads/" .$file_name);
+            $url = $_SERVER['HTTP_REFRER'];
+            $seg = explode('/',$url);
+            $path = $seg[0] .'/'.$seg[1].'/'.$seg[2].'/'.$seg[3];
+            $full_url = $path.'/'.'assets/uploads/'.$file_name;
+            $id = $_SESSION['id'];
+            $sql = "INSERT INTO profile(profession, profile_image, user_role) VALUES('$profession', '$full_url', '$id')";
+            $query = $conn->query($sql);
+            if($query){
+                header('Location:dashboard.php');
+            }else{
+                $msg = "Failed to upload image";
+            }
+        }
     }else{
         $error = "Please fill in all the details";
     }
@@ -36,7 +48,7 @@ if(isset($_FILES['avatar'])){
 <?php else:?>
 <?php include("include/header.php");?>
 <div class="container">
-<form class="form-horizontal" action="profile.php" method="POST">
+<form class="form-horizontal" action="profile.php" method="POST" enctype="multipart/form-data">
   <fieldset>
     <legend>ADD PROFILE</legend>
     <div class="row">
@@ -44,7 +56,7 @@ if(isset($_FILES['avatar'])){
             <div class="form-group">
                 <label for="profession" class="col-lg-2 col-form-label">Profession</label>
                 <div class="col-lg-10">
-                    <input type="text" name="email" class="form-control" placeholder="Email">
+                    <input type="text" name="profession" class="form-control" placeholder="Email">
                 </div>
             </div>
         </div>
@@ -80,8 +92,6 @@ if(isset($_FILES['avatar'])){
             </div>
         </div>
     </div>
-    
-    
   </fieldset>
 </form>
 </div>
