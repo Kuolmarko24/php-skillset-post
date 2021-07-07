@@ -26,7 +26,7 @@
           <?php if($login_url=='http://localhost/posts/index.php'):?>
           <li><a href="login.php">Login</a></li>
           <?php elseif(isset($_SESSION['username'])):?>
-            <li><a href="#">Dashboard</a></li>
+            <li><a href="dashboard.php">Dashboard</a></li>
             <li><a href="profile.php">Add Profile</a></li>
             <li><a href="post.php">Add Post</a></li>
             <li><a href="logout.php">LogOut</a></li>

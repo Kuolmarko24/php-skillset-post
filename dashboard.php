@@ -23,7 +23,7 @@ session_start();
         $url = $_SERVER['PHP_SELF'];
         $seg  = explode('/',$url);
         $path = "http://127.0.0.1".$seg[0].'/'.$seg[1];
-        $full_url = $path.'/'.'img'.'/'.'kuol.jpg';
+        $full_url = $path.'/'.'img'.'/'.'xbox.jpg';
     ?>
     <?php if($_SESSION['id']):?>
     <h1>Admin Dashboard</h1>
@@ -32,10 +32,10 @@ session_start();
     <?php endif;?>
     <h1 style="text-align:center;">Welcome <?php echo $_SESSION['username'];?></h1>
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-12 result">
         <p style="text-align:center;">
             <?php if(isset($avatar)):?>
-            <!-- code for displaying image should be here though it displays a bigger imae on the screen. i had to remove it -->
+                <img src=<?php echo $avatar;?> style="width: 200px; height:200px; border-radius:50%;" alt="xbox"/>
             <h4 style="text-align:center;"><?php echo $profession;?></h4>
             <?php else:?>
             <img src=<?php echo $full_url;?>>
@@ -79,3 +79,41 @@ session_start();
 </div>
 <?php include("include/footer.php");?>
 <?php endif;?>    
+<script type="text/javascript">
+            var start = 0;
+            var limit = 5;
+            var reachedMax = false;
+
+            $(window).scroll(function () {
+                if ($(window).scrollTop() == $(document).height() - $(window).height())
+                    getData();
+            });
+
+            $(document).ready(function () {
+               getData();
+            });
+
+            function getData() {
+                if (reachedMax)
+                    return;
+
+                $.ajax({
+                   url: 'data.php',
+                   method: 'POST',
+                    dataType: 'text',
+                   data: {
+                       getData: 1,
+                       start: start,
+                       limit: limit
+                   },
+                   success: function(response) {
+                        if (response == "reachedMax")
+                            reachedMax = true;
+                        else {
+                            start += limit;
+                            $(".results").append(response);
+                        }
+                    }
+                });
+            }
+        </script>
